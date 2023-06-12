@@ -1,1 +1,37 @@
+import RPi.GPIO as GPIO
+import time
+
+# 设置GPIO引脚
+gas_sensor_pin = 17
+led_pin = 18
+buzzer_pin = 23
+
+# 初始化GPIO设置
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(gas_sensor_pin, GPIO.IN)
+GPIO.setup(led_pin, GPIO.OUT)
+GPIO.setup(buzzer_pin, GPIO.OUT)
+
+def gas_detection():
+    while True:
+        gas_level = GPIO.input(gas_sensor_pin)
+        
+        if gas_level == GPIO.HIGH:
+            print("瓦斯浓度超过阈值！")
+            GPIO.output(led_pin, GPIO.HIGH)  # 打开LED灯
+            GPIO.output(buzzer_pin, GPIO.HIGH)  # 打开蜂鸣器
+            time.sleep(1)  # 警报持续1秒
+            GPIO.output(led_pin, GPIO.LOW)  # 关闭LED灯
+            GPIO.output(buzzer_pin, GPIO.LOW)  # 关闭蜂鸣器
+        
+        time.sleep(0.1)  # 每隔0.1秒检测一次
+
+try:
+    print("瓦斯检测装置已启动...")
+    gas_detection()
+    
+except KeyboardInterrupt:
+    print("程序已终止！")
+    GPIO.cleanup()
 
